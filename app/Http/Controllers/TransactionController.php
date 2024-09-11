@@ -20,8 +20,8 @@ class TransactionController extends Controller
         $data = [
             'Trans_Id' => $request->Trans_Id,
             'Categories' => $request->Categories,
-            'Sub_Amount' => $request->Sub_Amount,
-            'Total_Amount' => $request->Total_Amount,
+            'Sub_Amount' => (float) $request->Sub_Amount,
+            'Total_Amount' =>(float)$request->Total_Amount,
             'Date_Created' => $request->Date_Created
         ];
 
