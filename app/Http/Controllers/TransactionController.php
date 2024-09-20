@@ -10,8 +10,8 @@ class TransactionController extends Controller
     public function index()
     {
 
-        $transaction = Transaction::all();
-        return response()->json($transaction, 200);
+        $transaction = Transaction::paginate(10);
+        return response()->json($transaction , 200);
     }
 
     public function store(Request $request)
@@ -19,10 +19,14 @@ class TransactionController extends Controller
 
         $data = [
             'Trans_Id' => $request->Trans_Id,
+            'Reference_No' => $request->Reference_No,
             'Categories' => $request->Categories,
             'Sub_Amount' => (float) $request->Sub_Amount,
-            'Total_Amount' =>(float)$request->Total_Amount,
-            'Date_Created' => $request->Date_Created
+            'Total_Amount' => (float)$request->Total_Amount,
+            'Date_Created' => $request->Date_Created,
+            'Penalties' => (float)$request->Penalties,
+            'Status' => $request->Status
+
         ];
 
         $save = Transaction::create($data);
@@ -48,5 +52,41 @@ class TransactionController extends Controller
         } else {
             return response()->json(['message' => 'transaction not found'], 404);
         }
+    }
+    public function search(Request $request)
+    {
+        // $query = $request->input('query'); 
+        // $users = Transaction::where('Categories', 'LIKE', "%{$query}%")->get();
+        // return response()->json($users);
+
+        $query = Transaction::query();
+
+        if ($request->has('Trans_Id')) {
+            $query->where('Trans_Id', $request->Trans_Id);
+        }
+        if ($request->has('Reference_No')) {
+            $query->where('Reference_No', $request->Reference_No);
+        }
+        if ($request->has('Categories')) {
+            $query->where('Categories', $request->Categories);
+        }
+        if ($request->has('Sub_Amount')) {
+            $query->where('Sub_Amount', $request->Sub_Amount);
+        }
+        if ($request->has('Total_Amount')) {
+            $query->where('Total_Amount', $request->Total_Amount);
+        }
+        if ($request->has('Date_Created')) {
+            $query->where('Date_Created', $request->Date_Created);
+        }
+        if ($request->has('Penalties')) {
+            $query->where('Penalties', $request->Penalties);
+        }
+        if ($request->has('Status')) {
+            $query->where('Status', $request->Status);
+        }
+        $data = $query->paginate(10);
+
+        return response()->json($data);
     }
 }
