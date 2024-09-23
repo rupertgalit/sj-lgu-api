@@ -27,10 +27,20 @@ class AuthController extends Controller
             $user->save();
         }
         $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json([
+        $data = [
+            'status' => 200,
+            'message' => 'success',
             'access_token' => $token,
-            'token_type' => 'Bearer',
-            'status' => $user->Is_active,
+            'details' => [
+                'username' => $user->Username,
+                'password' => $user->Password,
+                'usertype' => $user->UserType,
+                'is_active' => $user->Is_active,
+                'status' => $user->Status
+            ],
+        ];
+        return response()->json([
+            $data
         ]);
     }
 
