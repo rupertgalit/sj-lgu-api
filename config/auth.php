@@ -35,17 +35,18 @@ return [
     |
     */
 
- 'guards' => [
-    'web' => [
-        'driver' => 'session',
-        'provider' => 'users',
-    ],
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
 
-    'api' => [
-        'driver' => 'sanctum',
-        'provider' => 'users',
+        'api' => [
+            \Illuminate\Session\Middleware\StartSession::class, // Add this to handle sessions in API
+            'throttle:api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
     ],
-],
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +68,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\User::class, // Ensure the correct user model is being used
         ],
 
         // 'users' => [
