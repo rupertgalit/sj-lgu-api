@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\User_logs;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,7 @@ class AuthController extends Controller
             ];
             return response()->json($data);
         }
+
         if (Hash::check($request->input('password'), $user->Password)) {
 
             if ($user->Is_active == '0') {
@@ -41,6 +43,9 @@ class AuthController extends Controller
             }
 
             $token = $user->createToken('auth_token')->plainTextToken;
+
+            $user_logs = User_logs::where('token', $token)->first();
+
             $data = [
                 'status' => 200,
                 'message' => 'success',
@@ -71,7 +76,7 @@ class AuthController extends Controller
         $user->Is_active = '0';
         $user->save();
 
-        $request->user()->currentAccessToken()->delete();
+        // $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out successfully']);
     }
     public function register(Request $request)

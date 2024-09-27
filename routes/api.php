@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Categories;
 use Illuminate\Http\Request;
@@ -15,5 +16,6 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/transaction-display', [TransactionController::class, 'index']);
 Route::post('/transaction-insert', [TransactionController::class, 'store']);
-Route::get('/transaction-search', [TransactionController::class, 'search']);
-Route::post('/categories-insert', [Categories::class, 'store']);
+Route::post('/transaction-search', [TransactionController::class, 'search']);
+Route::post('/categories-insert', [CategoriesController::class, 'store']);
+Route::post('/categories-display', [CategoriesController::class, 'index']);

@@ -10,6 +10,11 @@ class TransactionController extends Controller
     public function index()
     {
 
+        
+        $posts = Transaction::orderBy('created_at', 'asc')->paginate(10);
+        // Return the sorted posts as a JSON response
+        return response()->json($posts);
+
         $transaction = Transaction::paginate(10);
         return response()->json($transaction , 200);
     }
@@ -63,26 +68,82 @@ class TransactionController extends Controller
 
         if ($request->has('Trans_Id')) {
             $query->where('Trans_Id', $request->Trans_Id);
+            $query->where('Reference_No', $request->Reference_No);
+            $query->where('Categories', $request->Categories);
+            $query->where('Sub_Amount', $request->Sub_Amount);
+            $query->where('Total_Amount', $request->Total_Amount);
+            $query->where('Date_Created', $request->Date_Created);
+            $query->where('Penalties', $request->Penalties);
+            $query->where('Status', $request->Status);
         }
         if ($request->has('Reference_No')) {
+            $query->where('Trans_Id', $request->Trans_Id);
             $query->where('Reference_No', $request->Reference_No);
+            $query->where('Categories', $request->Categories);
+            $query->where('Sub_Amount', $request->Sub_Amount);
+            $query->where('Total_Amount', $request->Total_Amount);
+            $query->where('Date_Created', $request->Date_Created);
+            $query->where('Penalties', $request->Penalties);
+            $query->where('Status', $request->Status);
         }
         if ($request->has('Categories')) {
+            $query->where('Trans_Id', $request->Trans_Id);
+            $query->where('Reference_No', $request->Reference_No);
             $query->where('Categories', $request->Categories);
+            $query->where('Sub_Amount', $request->Sub_Amount);
+            $query->where('Total_Amount', $request->Total_Amount);
+            $query->where('Date_Created', $request->Date_Created);
+            $query->where('Penalties', $request->Penalties);
+            $query->where('Status', $request->Status);
         }
         if ($request->has('Sub_Amount')) {
+            $query->where('Trans_Id', $request->Trans_Id);
+            $query->where('Reference_No', $request->Reference_No);
+            $query->where('Categories', $request->Categories);
             $query->where('Sub_Amount', $request->Sub_Amount);
-        }
-        if ($request->has('Total_Amount')) {
             $query->where('Total_Amount', $request->Total_Amount);
+            $query->where('Date_Created', $request->Date_Created);
+            $query->where('Penalties', $request->Penalties);
+            $query->where('Status', $request->Status);
+          }
+        if ($request->has('Total_Amount')) {
+            $query->where('Trans_Id', $request->Trans_Id);
+            $query->where('Reference_No', $request->Reference_No);
+            $query->where('Categories', $request->Categories);
+            $query->where('Sub_Amount', $request->Sub_Amount);
+            $query->where('Total_Amount', $request->Total_Amount);
+            $query->where('Date_Created', $request->Date_Created);
+            $query->where('Penalties', $request->Penalties);
+            $query->where('Status', $request->Status);
         }
         if ($request->has('Date_Created')) {
+            $query->where('Trans_Id', $request->Trans_Id);
+            $query->where('Reference_No', $request->Reference_No);
+            $query->where('Categories', $request->Categories);
+            $query->where('Sub_Amount', $request->Sub_Amount);
+            $query->where('Total_Amount', $request->Total_Amount);
             $query->where('Date_Created', $request->Date_Created);
+            $query->where('Penalties', $request->Penalties);
+            $query->where('Status', $request->Status);
         }
         if ($request->has('Penalties')) {
+            $query->where('Trans_Id', $request->Trans_Id);
+            $query->where('Reference_No', $request->Reference_No);
+            $query->where('Categories', $request->Categories);
+            $query->where('Sub_Amount', $request->Sub_Amount);
+            $query->where('Total_Amount', $request->Total_Amount);
+            $query->where('Date_Created', $request->Date_Created);
             $query->where('Penalties', $request->Penalties);
+            $query->where('Status', $request->Status);
         }
         if ($request->has('Status')) {
+            $query->where('Trans_Id', $request->Trans_Id);
+            $query->where('Reference_No', $request->Reference_No);
+            $query->where('Categories', $request->Categories);
+            $query->where('Sub_Amount', $request->Sub_Amount);
+            $query->where('Total_Amount', $request->Total_Amount);
+            $query->where('Date_Created', $request->Date_Created);
+            $query->where('Penalties', $request->Penalties);
             $query->where('Status', $request->Status);
         }
         $data = $query->paginate(10);
