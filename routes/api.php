@@ -14,8 +14,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::post('/transaction-display', [TransactionController::class, 'index']);
+// Route::post('/transaction-display', [TransactionController::class, 'index']);
+
+Route::post('/transaction-display', [TransactionController::class, 'sort']);
+
+
+
 Route::post('/transaction-insert', [TransactionController::class, 'store']);
 Route::post('/transaction-search', [TransactionController::class, 'search']);
 Route::post('/categories-insert', [CategoriesController::class, 'store']);
 Route::post('/categories-display', [CategoriesController::class, 'index']);
+Route::post('/categories-update/{id}', [CategoriesController::class, 'update']);

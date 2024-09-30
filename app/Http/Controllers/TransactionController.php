@@ -2,23 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
 use App\Models\Transaction;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class TransactionController extends Controller
 {
-    public function index()
-    {
+    public function index() {}
+    public function sort(Request $request) {
+
+        $request->validate([
+            'sort_by' => 'nullable|string|in:Trans_id,Recipient', // Allowed columns for sorting
+            'sort_order' => 'nullable|string|in:asc,desc', // Ascending or descending order
+        ]);
+
+        $sortBy = $request->input('sort_by', 'Recipient'); 
+        $sortOrder = $request->input('sort_order', 'asc'); 
 
 
-        $posts = Transaction::orderBy('created_at', 'asc')->paginate(10);
-        // Return the sorted posts as a JSON response
+        
+    
+
+        $posts = Transaction::orderBy($sortBy, $sortOrder)->get();
+
         return response()->json($posts);
 
-        $transaction = Transaction::paginate(10);
-        return response()->json($transaction, 200);
     }
-
     public function store(Request $request)
     {
 
@@ -63,8 +74,8 @@ class TransactionController extends Controller
 
         $searchQuery = $request->input('search');
         $posts = Transaction::where('Trans_Id', 'like', '%' . $searchQuery . '%')
-            ->orWhere('Reference_No', 'like', '%' . $searchQuery . '%') 
-            ->orWhere('Name', 'like', '%' . $searchQuery . '%') 
+            ->orWhere('Reference_No', 'like', '%' . $searchQuery . '%')
+            ->orWhere('Name', 'like', '%' . $searchQuery . '%')
             ->orWhere('Company', 'like', '%' . $searchQuery . '%')
             ->orWhere('Reference_No', 'like', '%' . $searchQuery . '%')
             ->orWhere('Categories', 'like', '%' . $searchQuery . '%')

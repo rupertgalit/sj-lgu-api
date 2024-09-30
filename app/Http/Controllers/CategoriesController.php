@@ -8,43 +8,11 @@ use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
-    public function index() {
-
+    public function index()
+    {
 
         $posts = Categories::all();
         return response()->json($posts);
-
-        // $has_penalty = Categories::where('Has_Penalty', "0")->first();
-        
-        // $penalty = Categories::where('Has_Penalty', "1")->first();
-
-        // if (!$has_penalty || !$penalty) {
-        //     return response()->json(['message' => 'Post not found'], 404);
-        // }
-        
-
-        // $query = Categories::query();
-
-        // if ($has_penalty->has('')) {
-        //     $query->where('Has_Penalty', $has_penalty->Has_Penalty);
-        // }
-
-        // return response()->json([
-        //     'published' => $publishedPosts,
-        //     'drafts' => $draftPosts
-        // ]);
-        // return new PostResource($has_penalty,200);
-
-        // return response()->json([
-        //         $has_penalty,$penalty
-        // ]);
-
-        // return PostResource::collection($posts);
-        
-        // return response()->json( $has_penalty, 200);
-
-
-        
     }
 
     public function store(Request $request)
@@ -69,7 +37,28 @@ class CategoriesController extends Controller
     }
 
     public function show(string $id) {}
-    public function update(Request $request, string $id) {}
+    public function update(Request $request, string $id)
+    {
+        $resource = Categories::find($id);
+
+        if (!$resource) {
+            return response()->json(['message' => 'Resource not found'], 404);
+        }
+
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'Category_Name' => 'required',
+            'Amount' => 'required',
+            'Has_Penalty' => 'required',
+            
+        ]);
+
+        // Update the record
+        $resource->update($validatedData);
+
+        // Return a successful response
+        return response()->json(['message' => 'Resource updated successfully', 'data' => $resource], 200);
+    }
     public function destroy(string $id) {}
     public function search(Request $request) {}
 }
