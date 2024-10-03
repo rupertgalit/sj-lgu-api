@@ -59,9 +59,9 @@ class CategoriesController extends Controller
 
         // Validate the incoming request
         $validatedData = $request->validate([
-            'Category_Name' => 'required',
-            'Amount' => 'required',
-            'Is_Fix' => 'required',
+            'Category_Name' => '',
+            'Amount' => '',
+            'Is_Fix' => '',
             
         ]);
 
