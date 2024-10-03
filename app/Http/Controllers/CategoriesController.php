@@ -12,9 +12,8 @@ class CategoriesController extends Controller
      public function GenCateroiesId()
     {
         do {
-            // You can use any logic to generate the number, here using a random number
-            $uniqueNumber = mt_rand(1000000000, 9999999999); // 10-digit random number
-        } while (Categories::where('Category_Id', $uniqueNumber)->exists()); // Ensure it's unique
+            $uniqueNumber = mt_rand(1000000000, 9999999999); 
+        } while (Categories::where('Category_Id', $uniqueNumber)->exists());
 
         return $uniqueNumber;
     }

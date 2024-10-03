@@ -10,36 +10,60 @@ use Illuminate\Support\Str;
 
 class TransactionController extends Controller
 {
+
+    public function GenTransactionId()
+    {
+        do {
+            $uniqueNumber = mt_rand(1000000000, 9999999999);
+        } while (Transaction::where('Trans_Id', $uniqueNumber)->exists());
+
+        return $uniqueNumber;
+    }
+
+    public function GenReferenceNumber()
+    {
+        do {
+            // Generate a random reference number
+            $referenceNumber = 'REF-' . strtoupper(Str::random(8));
+        } while (Transaction::where('Reference_No', $referenceNumber)->exists()); // Ensure it's unique
+
+        return $referenceNumber;
+    }
+    
+
     public function index() {}
-    public function sort(Request $request) {
+    public function sort(Request $request)
+    {
 
         $request->validate([
             'sort_by' => 'nullable|string|in:Trans_id,Recipient', // Allowed columns for sorting
             'sort_order' => 'nullable|string|in:asc,desc', // Ascending or descending order
         ]);
 
-        $sortBy = $request->input('sort_by', 'Recipient'); 
-        $sortOrder = $request->input('sort_order', 'asc'); 
+        $sortBy = $request->input('sort_by', 'Recipient');
+        $sortOrder = $request->input('sort_order', 'asc');
 
 
-        
-    
+
+
 
         $posts = Transaction::orderBy($sortBy, $sortOrder)->get();
 
         return response()->json($posts);
-
     }
     public function store(Request $request)
     {
-
+        $customOrderId = $this->GenTransactionId();
+        
+        $customOrderRef = $this->GenReferenceNumber();
+        
         $data = [
-            'Trans_Id' => $request->Trans_Id,
-            'Reference_No' => $request->Reference_No,
+            'Trans_Id' => $customOrderId,
+            'Reference_No' =>  $customOrderRef,
             'Categories' => $request->Categories,
             'Sub_Amount' => (float) $request->Sub_Amount,
             'Total_Amount' => (float)$request->Total_Amount,
-            'Date_Created' => $request->Date_Created,
+            'Date_Created' => now(),
             'Penalties' => (float)$request->Penalties,
             'Status' => $request->Status
 
