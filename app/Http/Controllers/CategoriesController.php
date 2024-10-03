@@ -5,9 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PostResource;
 use App\Models\Categories;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
 class CategoriesController extends Controller
+
 {
+     public function GenCateroiesId()
+    {
+        do {
+            // You can use any logic to generate the number, here using a random number
+            $uniqueNumber = mt_rand(1000000000, 9999999999); // 10-digit random number
+        } while (Categories::where('Category_Id', $uniqueNumber)->exists()); // Ensure it's unique
+
+        return $uniqueNumber;
+    }
+
     public function index()
     {
 
@@ -17,13 +28,15 @@ class CategoriesController extends Controller
 
     public function store(Request $request)
     {
+        $customOrderId = $this->GenCateroiesId();
+
 
         $data = [
-            'Category_Id' => (float) $request->Category_Id,
+            'Category_Id' =>(float) $customOrderId,
             'Category_Name' => $request->Category_Name,
             'Amount' => (float)$request->Amount,
-            'Has_Penalty' => (float) $request->Has_Penalty,
-            'Penalties' => (float)$request->Penalties,
+            'Is_Fix' => (float) $request->Is_Fix,
+            // 'Penalties' => (float)$request->Penalties,
         ];
 
         $save = Categories::create($data);
@@ -49,7 +62,7 @@ class CategoriesController extends Controller
         $validatedData = $request->validate([
             'Category_Name' => 'required',
             'Amount' => 'required',
-            'Has_Penalty' => 'required',
+            'Is_Fix' => 'required',
             
         ]);
 
