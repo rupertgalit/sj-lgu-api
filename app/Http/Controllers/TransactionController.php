@@ -29,29 +29,51 @@ class TransactionController extends Controller
 
         return $referenceNumber;
     }
-    
+
 
     public function index() {}
     public function sort(Request $request)
     {
 
-        $request->validate([
-            'sort_by' => 'nullable|string|in:Trans_id,Recipient', // Allowed columns for sorting
-            'sort_order' => 'nullable|string|in:asc,desc', // Ascending or descending order
-        ]);
+        // $request->validate([
+        //     'sort_by' => 'nullable|string|in:Trans_id,Recipient', // Allowed columns for sorting
+        //     'sort_order' => 'nullable|string|in:asc,desc', // Ascending or descending order
+        // ]);
 
-        $sortBy = $request->input('sort_by', 'Trans_id');
-        $sortOrder = $request->input('sort_order', 'desc');
-        $posts = Transaction::orderBy($sortBy, $sortOrder)->get();
+        // $sortBy = $request->input('sort_by', 'Trans_id');
+        // $sortOrder = $request->input('sort_order', 'desc');
+        // $posts = Transaction::orderBy($sortBy, $sortOrder)->get();
 
-        return response()->json($posts);
+        // return response()->json($posts);
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDirection = $request->query('sort_direction', 'desc');
+
+        // Validate the sort direction to be either 'asc' or 'desc'
+        if (!in_array(strtolower($sortDirection), ['asc', 'desc'])) {
+            $sortDirection = 'asc'; // Default to ascending if the direction is invalid
+        }
+
+        // Validate the column name to prevent sorting by invalid fields
+        $allowedSortColumns = ['created_at', 'Trans_Id', 'id' , 'Recipient']; // Define allowed fields
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'created_at'; // Default to 'created_at' if invalid column is passed
+        }
+
+        // Fetch and sort the orders based on the validated sort parameters
+        $orders = Transaction::orderBy($sortBy, $sortDirection)->get();
+
+        // Return sorted data as JSON
+        return response()->json([
+            'message' => 'Orders fetched successfully!',
+            'orders' => $orders,
+        ], 200);
     }
     public function store(Request $request)
     {
         $customOrderId = $this->GenTransactionId();
-        
+
         $customOrderRef = $this->GenReferenceNumber();
-        
+
         $data = [
             'Trans_Id' => $customOrderId,
             'Reference_No' =>  $customOrderRef,

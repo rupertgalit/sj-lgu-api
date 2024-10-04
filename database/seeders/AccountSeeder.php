@@ -16,28 +16,28 @@ class AccountSeeder extends Seeder
         DB::table('users')->insert([
             [
                 "Email" => "sadmin@mail.com",
-                "Password" => "123",
+                "Password" => bcrypt('123'),
                 "UserType" => 1,
                 "Is_active" => 0,
                 "Status" => "ACTIVATED",
             ],
             [
                 "Email" => "cashier@mail.com",
-                "Password" => "123",
+                "Password" => bcrypt('123'),
                 "UserType" => 2,
                 "Is_active" => 0,
                 "Status" => "ACTIVATED",
             ],
             [
                 "Email" => "accounting@mail.com",
-                "Password" => "123",
+                "Password" => bcrypt('123'),
                 "UserType" => 3,
                 "Is_active" => 0,
                 "Status" => "ACTIVATED",
             ],
             [
                 "Email" => "ceo@mail.com",
-                "Password" => "123",
+                "Password" => bcrypt('123'),
                 "UserType" => 4,
                 "Is_active" => 0,
                 "Status" => "ACTIVATED",

@@ -14,7 +14,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/accounts', [AuthController::class, 'index']);
 
-Route::post('/transaction-display', [TransactionController::class, 'sort']);
+Route::get('/transaction-display', [TransactionController::class, 'sort']);
 Route::post('/transaction-insert', [TransactionController::class, 'store']);
 Route::post('/transaction-search', [TransactionController::class, 'search']);
 
