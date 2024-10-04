@@ -17,14 +17,14 @@ class AccountSeeder extends Seeder
             [
                 "Email" => "sadmin@mail.com",
                 "Password" => bcrypt('123'),
-                "UserType" => 1,
+                "UserType" => 0,
                 "Is_active" => 0,
                 "Status" => "ACTIVATED",
             ],
             [
                 "Email" => "cashier@mail.com",
                 "Password" => bcrypt('123'),
-                "UserType" => 2,
+                "UserType" => 1,
                 "Is_active" => 0,
                 "Status" => "ACTIVATED",
             ],
@@ -38,10 +38,17 @@ class AccountSeeder extends Seeder
             [
                 "Email" => "ceo@mail.com",
                 "Password" => bcrypt('123'),
-                "UserType" => 4,
+                "UserType" => 3,
                 "Is_active" => 0,
                 "Status" => "ACTIVATED",
             ],
+            [
+                "Email" => "csr@mail.com",
+                "Password" => bcrypt('123'),
+                "UserType" => 4,
+                "Is_active" => 0,
+                "Status" => "ACTIVATED",
+            ]
         ]);
     }
 }
