@@ -40,13 +40,8 @@ class TransactionController extends Controller
             'sort_order' => 'nullable|string|in:asc,desc', // Ascending or descending order
         ]);
 
-        $sortBy = $request->input('sort_by', 'Recipient');
-        $sortOrder = $request->input('sort_order', 'asc');
-
-
-
-
-
+        $sortBy = $request->input('sort_by', 'Trans_id');
+        $sortOrder = $request->input('sort_order', 'desc');
         $posts = Transaction::orderBy($sortBy, $sortOrder)->get();
 
         return response()->json($posts);

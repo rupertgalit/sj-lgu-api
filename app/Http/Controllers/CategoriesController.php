@@ -6,13 +6,14 @@ use App\Http\Resources\PostResource;
 use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
 class CategoriesController extends Controller
 
 {
-     public function GenCateroiesId()
+    public function GenCateroiesId()
     {
         do {
-            $uniqueNumber = mt_rand(1000000000, 9999999999); 
+            $uniqueNumber = mt_rand(1000000000, 9999999999);
         } while (Categories::where('Category_Id', $uniqueNumber)->exists());
 
         return $uniqueNumber;
@@ -31,7 +32,7 @@ class CategoriesController extends Controller
 
 
         $data = [
-            'Category_Id' =>(float) $customOrderId,
+            'Category_Id' => (float) $customOrderId,
             'Category_Name' => $request->Category_Name,
             'Amount' => (float)$request->Amount,
             'Is_Fix' => (float) $request->Is_Fix,
@@ -62,7 +63,7 @@ class CategoriesController extends Controller
             'Category_Name' => '',
             'Amount' => '',
             'Is_Fix' => '',
-            
+
         ]);
 
         // Update the record

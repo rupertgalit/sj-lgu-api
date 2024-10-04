@@ -13,6 +13,12 @@ use Symfony\Component\Console\Input\Input;
 
 class AuthController extends Controller
 {
+
+    public function index()
+    {
+        $posts = User::all();
+        return response()->json($posts);
+    }
     public function login(Request $request)
     {
 
