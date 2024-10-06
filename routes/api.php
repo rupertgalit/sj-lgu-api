@@ -12,12 +12,14 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('/accounts', [AuthController::class, 'index']);
+Route::post('/accounts', [AuthController::class, 'index']);
 
-Route::get('/transaction-display', [TransactionController::class, 'sort']);
+Route::post('/transaction-display', [TransactionController::class, 'index']);
+Route::post('/transaction-display-sort', [TransactionController::class, 'sort']);
+
+
 Route::post('/transaction-insert', [TransactionController::class, 'store']);
 Route::post('/transaction-search', [TransactionController::class, 'search']);
-
 Route::post('/categories-insert', [CategoriesController::class, 'store']);
 Route::get('/categories-display', [CategoriesController::class, 'index']);
-Route::post('/categories-update/{id?}', [CategoriesController::class, 'update']);
+Route::post('/categories-update/{id}', [CategoriesController::class, 'update']);
