@@ -39,6 +39,7 @@ class TransactionController extends Controller
     }
     public function sort(Request $request)
     {
+
         $defaultSortBy = 'id'; // Default to 'id' if null
         $defaultSortDirection = 'asc'; // Default to 'asc' if null
 
@@ -51,22 +52,44 @@ class TransactionController extends Controller
             $sortDirection = $defaultSortDirection;
         }
 
-    $perPage = (int) ($request->get('per_page', 10));  // Default to 10 items per page
-    $perPage = $perPage > 100 ? 100 : $perPage;  // Maximum 100 items per page
 
-    // Perform the query and paginate results
-    $query = Transaction::orderBy($sortBy, $sortDirection);
+        $request->validate([
+            'per_page' => 'integer|min:1|max:100',
+            'page' => 'integer|min:1', // Optional: Limit per page from 1 to 100
+        ]);
+
+        $perPage = (int) ($request->get('per_page', 10));  // Default to 10 items per page
+        $perPage = $perPage > 100 ? 100 : $perPage;  // Maximum 100 items per page
+
+        // // Get the validated page number and per page value
+        $page = $request->get('page', 1);      // Default to page 1 if not provided
+        $perPage = $request->get('per_page', 4);  // Default to 10 items per page
+
+
+         // // Perform the query and paginate results
+         $query = Transaction::orderBy($sortBy, $sortDirection);
+         $data = $query->paginate($perPage, ['*'], 'page', $page);
+ 
+         // If the requested page is out of range, handle it here (optional)
+         if ($data->currentPage() > $data->lastPage()) {
+             return response()->json([
+                 'message' => 'Page not found.',
+                 'status' => 404,
+             ], 404);
+         }
+
+         
+        // Perform the query and paginate results
         $data = $query->paginate($perPage);
-    return response()->json([
-        'data' => $data->items(), 
-        'pagination' => [
-            'total' => $data->total(),
-            'count' => $data->count(),
-            'per_page' => $data->perPage(),
-            'current_page' => $data->currentPage(),
-            'total_pages' => $data->lastPage(),
-        ]
-    ]);
+        return response()->json([
+            'data' => $data->items(),
+            'pagination' => [
+                'total' => $data->total(),
+                'count' => $data->count(),
+                'per_page' => $data->perPage(),
+                'total_pages' => $data->lastPage(),
+            ]
+        ]);
 
     }
     public function store(Request $request)
