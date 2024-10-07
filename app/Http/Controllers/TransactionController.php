@@ -51,11 +51,23 @@ class TransactionController extends Controller
             $sortDirection = $defaultSortDirection;
         }
 
-        // Apply the sorting logic to the query
-        $data = Transaction::orderBy($sortBy, $sortDirection)->paginate(10);
+    $perPage = (int) ($request->get('per_page', 10));  // Default to 10 items per page
+    $perPage = $perPage > 100 ? 100 : $perPage;  // Maximum 100 items per page
 
-        // Return the sorted data as JSON response
-        return response()->json($data);
+    // Perform the query and paginate results
+    $query = Transaction::orderBy($sortBy, $sortDirection);
+        $data = $query->paginate($perPage);
+    return response()->json([
+        'data' => $data->items(), 
+        'pagination' => [
+            'total' => $data->total(),
+            'count' => $data->count(),
+            'per_page' => $data->perPage(),
+            'current_page' => $data->currentPage(),
+            'total_pages' => $data->lastPage(),
+        ]
+    ]);
+
     }
     public function store(Request $request)
     {
