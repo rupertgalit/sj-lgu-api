@@ -11,10 +11,7 @@ use Illuminate\Support\Str;
 class TransactionController extends Controller
 {
 
-    public $sortColumnName = 'created_at';
 
-    public $sortDirection = 'desc';
-    
     public function GenTransactionId()
     {
         do {
@@ -42,15 +39,23 @@ class TransactionController extends Controller
     }
     public function sort(Request $request)
     {
+        $defaultSortBy = 'id'; // Default to 'id' if null
+        $defaultSortDirection = 'asc'; // Default to 'asc' if null
 
-        $sortBy = $request->get('sort', 'id');
-        $sortDirection = $request->get('direction', 'asc') === 'asc' ? 'desc' : 'asc';
-    
-        // Apply sorting to the query
-        $users = Transaction::orderBy($sortBy, $sortDirection)->paginate(10);
-    
-        // Return response
-        return response()->json($users);
+        // Get sort field and direction from the request
+        $sortBy = $request->get('sort') ?? $defaultSortBy; // Use default if 'sort' is null
+        $sortDirection = $request->get('direction') ?? $defaultSortDirection; // Use default if 'direction' is null
+
+        // Validate the sort direction, ensuring it's either 'asc' or 'desc'
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = $defaultSortDirection;
+        }
+
+        // Apply the sorting logic to the query
+        $data = Transaction::orderBy($sortBy, $sortDirection)->paginate(10);
+
+        // Return the sorted data as JSON response
+        return response()->json($data);
     }
     public function store(Request $request)
     {
