@@ -16,8 +16,16 @@ class AuthController extends Controller
 
     public function index()
     {
-        $posts = User::all();
-        return response()->json($posts);
+        // $posts = User::all();
+        // return response()->json($posts);
+
+        $users = User::select('id', 'Email', 'UserType', 'Is_active', 'Status', 'created_at', 'updated_at')->get();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'success',
+            'data' => $users,
+        ]);
     }
     public function login(Request $request)
     {
@@ -117,4 +125,48 @@ class AuthController extends Controller
             'user' => $user,
         ], 201);
     }
+
+    public function update_status(Request $request, string $id)
+    {
+
+        $resource = User::find($id);
+        if (!$resource) {
+            return response()->json(['message' => 'Account not found'], 404);
+        }
+
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'Email' => '',
+            'Status' => '',
+        ]);
+
+        // Update the record
+        $resource->update($validatedData);
+
+        // Return a successful response
+        return response()->json(['message' => 'Resource updated successfully', 'data' => $resource], 200);
+    }
+
+    public function update(Request $request, string $id)
+    {
+
+        $resource = User::find($id);
+        if (!$resource) {
+            return response()->json(['message' => 'Account not found'], 404);
+        }
+
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'Email' => '',
+            'Status' => '',
+        ]);
+
+        // Update the record
+        $resource->update($validatedData);
+
+        // Return a successful response
+        return response()->json(['message' => 'Resource updated successfully', 'data' => $resource], 200);
+    }
+
+    public function change_password() {}
 }
