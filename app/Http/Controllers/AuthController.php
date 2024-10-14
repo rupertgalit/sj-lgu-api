@@ -168,5 +168,30 @@ class AuthController extends Controller
         return response()->json(['message' => 'Resource updated successfully', 'data' => $resource], 200);
     }
 
-    public function change_password() {}
+    public function change_password(Request $request, $id)
+    {
+        // Validate the old and new passwords
+        $request->validate([
+            'old_password' => 'required',
+            'password' => 'required', // Requires password_confirmation field
+        ]);
+
+        // Find the user by ID
+        $user = User::findOrFail($id);
+
+        // Check if the old password is correct
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json([
+                'message' => 'The old password is incorrect.',
+            ], 400);
+        }
+
+        // Hash and update the new password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json([
+            'message' => 'Password updated successfully!',
+        ], 200);
+    }
 }

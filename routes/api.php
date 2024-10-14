@@ -15,7 +15,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/accounts', [AuthController::class, 'index']);
 Route::post('/account-update-status', [AuthController::class, 'update_status']);
 Route::post('/account-update', [AuthController::class, 'update']);
-Route::post('/account-change-password', [AuthController::class, 'change_password']);
+Route::post('/account-change-password/{id}', [AuthController::class, 'change_password']);
 
 
 
