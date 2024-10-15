@@ -6,6 +6,7 @@ use App\Http\Resources\PostResource;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class TransactionController extends Controller
@@ -66,19 +67,19 @@ class TransactionController extends Controller
         $perPage = $request->get('per_page', 4);  // Default to 10 items per page
 
 
-         // // Perform the query and paginate results
-         $query = Transaction::orderBy($sortBy, $sortDirection);
-         $data = $query->paginate($perPage, ['*'], 'page', $page);
- 
-         // If the requested page is out of range, handle it here (optional)
-         if ($data->currentPage() > $data->lastPage()) {
-             return response()->json([
-                 'message' => 'Page not found.',
-                 'status' => 404,
-             ], 404);
-         }
+        // // Perform the query and paginate results
+        $query = Transaction::orderBy($sortBy, $sortDirection);
+        $data = $query->paginate($perPage, ['*'], 'page', $page);
 
-         
+        // If the requested page is out of range, handle it here (optional)
+        if ($data->currentPage() > $data->lastPage()) {
+            return response()->json([
+                'message' => 'Page not found.',
+                'status' => 404,
+            ], 404);
+        }
+
+
         // Perform the query and paginate results
         $data = $query->paginate($perPage);
         return response()->json([
@@ -90,7 +91,6 @@ class TransactionController extends Controller
                 'total_pages' => $data->lastPage(),
             ]
         ]);
-
     }
     public function store(Request $request)
     {
@@ -99,25 +99,85 @@ class TransactionController extends Controller
         $customOrderRef = $this->GenReferenceNumber();
 
         $data = [
-            'Trans_Id' => $customOrderId,
-            'Reference_No' =>  $customOrderRef,
             'Categories' => $request->Categories,
             'Sub_Amount' => (float) $request->Sub_Amount,
             'Total_Amount' => (float)$request->Total_Amount,
             'Date_Created' => now(),
             'Penalties' => (float)$request->Penalties,
-            'Status' => $request->Status
+            'Status' => $request->Status,
+            'Trans_Id' => $customOrderId,
+            'Name' => $request->Name,
+            'Company' => $request->Company,
+            'Reference_No' =>  $customOrderRef,
 
         ];
 
-        $save = Transaction::create($data);
-        $reponse = [
-            "status" => "200",
-            "message" => "success",
-            "data" => $save
-        ];
 
-        return response()->json($reponse, 200);
+        $response = Http::withHeaders([
+            'X-API-KEY' => 'sUteyGvTzslWLz6ivqsdc7E01',
+            'X-API-USERNAME' => 'LGU Test_UAT',
+            'X-API-PASSWORD' => 'tpPlzmQYoMlSvTv9Vm2cgolxT',
+        ])->get('https://demo-api.netglobalsolutions.net/api/generate_token');
+
+        if ($response->successful()) {
+
+            $responseData = $response->json();
+            $token = $responseData['data']['token'];
+
+            if (is_null($token) || empty($token)) {
+                return response()->json([
+                    "status" => "400",
+                    "message" => "failed",
+                    "data" => [],
+                ], 400); // Bad Request
+            }
+            $apiUrl = 'https://demo-api.netglobalsolutions.net/payment/cashin';
+
+            // Define headers (if required by the API)
+            $headers = [
+                'Authorization' => 'Bearer ' . $token,
+                'X-API-KEY' => 'sUteyGvTzslWLz6ivqsdc7E01',
+                'Accept' => 'application/json',
+            ];
+
+            // Define the data to be posted
+            $postData = [
+                'amount' => $request->input('Total_Amount'),
+                'reference_number' =>  $customOrderRef,
+                'payment_type' =>  '3',
+                'name' =>  $request->input('Name'),
+                'phone_number' =>  '09345678100',
+                'email' =>  'test@gmail.com',
+                'notify_url' =>  'https://demo-api.netglobalsolutions.net/payment/callback',
+
+            ];
+
+            // Make the POST request with headers and data
+            $response = Http::withHeaders($headers)->post($apiUrl, $postData);
+
+            // Handle the response
+            if ($response->successful()) {
+                $save = Transaction::create($data);
+                return response()->json([
+                    "status" => "200",
+                    'message' => 'success',
+                    'response' => $response->json(),
+                ], 200);
+            } else {
+                // Handle the error response
+                return response()->json([
+                    'status' => $response->status(),
+                    'message' => 'failed',
+                    'error' => $response->json(),
+                ], $response->status());
+            }
+        }
+
+        return response()->json([
+            'status' => $response->status(),
+            'message' => 'failed',
+            "data" => [],
+        ], $response->status());
     }
 
     public function show(string $id) {}
